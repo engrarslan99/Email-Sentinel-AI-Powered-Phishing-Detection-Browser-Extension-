@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      width: 420px;
+      min-height: 200px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #333;
+      overflow: hidden;
+    }
+
+    .container {
+      background: white;
+      margin: 8px;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      padding: 16px 20px;
+      color: white;
+      text-align: center;
+      position: relative;
+    }
+
+    .header h1 {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .shield-icon {
+      width: 24px;
+      height: 24px;
+      fill: currentColor;
+    }
+
+    .header-subtitle {
+      font-size: 11px;
+      opacity: 0.9;
+      margin-top: 4px;
+      font-weight: 400;
+    }
+
+    .content {
+      padding: 20px;
+    }
+
+    #status {
+      text-align: center;
+      padding: 20px;
+      font-size: 16px;
+      color: #666;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .status-loading {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .trust-score-container {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .trust-score {
+      display: inline-block;
+      padding: 16px 24px;
+      border-radius: 12px;
+      font-weight: bold;
+      font-size: 16px;
+      min-width: 320px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      margin-bottom: 8px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .main-score {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+
+    .detailed-scores {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .score-breakdown {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .score-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+      padding: 2px 0;
+    }
+
+    .score-label {
+      font-weight: 500;
+      flex: 1;
+      text-align: left;
+    }
+
+    .score-value {
+      font-weight: bold;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 2px 6px;
+      border-radius: 4px;
+      min-width: 35px;
+      text-align: center;
+    }
+
+    .ml-confidence-inline, .api-status-inline {
+      font-size: 10px;
+      opacity: 0.8;
+      color: rgba(255, 255, 255, 0.9);
+      font-weight: normal;
+      margin-left: 4px;
+    }
+
+    .api-status-inline.success {
+      color: rgba(144, 238, 144, 0.9);
+    }
+
+    .api-status-inline.unavailable {
+      color: rgba(255, 255, 150, 0.9);
+    }
+
+    .risk-safe {
+      background: linear-gradient(135deg, #198754, #20c997);
+      color: white;
+      font-weight: bold;
+    }
+
+    .risk-likely-safe {
+      background: linear-gradient(135deg, #4CAF50, #81C784);
+      color: white;
+      font-weight: bold;
+    }
+
+    .risk-suspicious {
+      background: linear-gradient(135deg, #FFC107, #FFD54F);
+      color: #333;
+      font-weight: bold;
+    }
+
+    .risk-risky {
+      background: linear-gradient(135deg, #FF9800, #FFB74D);
+      color: white;
+      font-weight: bold;
+    }
+
+    .risk-dangerous {
+      background: linear-gradient(135deg, #dc3545, #c82333);
+      color: white;
+      font-weight: bold;
+      animation: pulse-dangerous 2s infinite;
+    }
+
+    @keyframes pulse-dangerous {
+      0%, 100% { 
+        transform: scale(1); 
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); 
+      }
+      50% { 
+        transform: scale(1.02); 
+        box-shadow: 0 6px 25px rgba(220, 53, 69, 0.5); 
+      }
+    }
+
+    .risk-level-text {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      margin-top: 8px;
+      margin-bottom: 8px;
+    }
+
+    .integration-status {
+      margin-top: 8px;
+      font-size: 11px;
+      text-align: center;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+
+    .integration-status.connected {
+      color: #155724;
+      background: rgba(40, 167, 69, 0.15);
+      border: 1px solid rgba(40, 167, 69, 0.3);
+    }
+
+    .integration-status.disconnected {
+      color: #721c24;
+      background: rgba(220, 53, 69, 0.15);
+      border: 1px solid rgba(220, 53, 69, 0.3);
+    }
+
+    .threats-section {
+      margin-top: 16px;
+      background: #fff3cd;
+      border: 1px solid #ffeaa7;
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 12px;
+    }
+
+    .threats-header {
+      font-weight: bold;
+      color: #856404;
+      margin-bottom: 8px;
+      text-align: center;
+    }
+
+    .threats-list {
+      color: #856404;
+    }
+
+    .threat-item {
+      margin: 2px 0;
+      padding: 2px 0;
+    }
+
+    .threat-item.api-threat {
+      border-left: 3px solid #dc3545;
+      padding-left: 8px;
+      font-weight: 500;
+      background: rgba(220, 53, 69, 0.05);
+      margin: 4px 0;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .url-section {
+      margin-top: 24px;
+    }
+
+    .url-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      font-weight: 600;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .link-icon {
+      width: 18px;
+      height: 18px;
+      fill: #4facfe;
+    }
+
+    .url-list {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 12px;
+      max-height: 250px;
+      overflow-y: auto;
+    }
+
+    .url-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 8px 0;
+      border-bottom: 1px solid #e9ecef;
+      font-size: 12px;
+    }
+
+    .url-item:last-child {
+      border-bottom: none;
+    }
+
+    .url-safe {
+      color: #28a745;
+    }
+
+    .url-suspicious {
+      color: #dc3545;
+      font-weight: 500;
+      background: rgba(220, 53, 69, 0.05);
+      padding: 4px;
+      border-radius: 4px;
+      margin: 2px 0;
+    }
+
+    .url-item.api-detected {
+      border-left: 3px solid #dc3545;
+      padding-left: 8px;
+      background: rgba(220, 53, 69, 0.08);
+      border-radius: 0 4px 4px 0;
+    }
+
+    .status-icon {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .safe-icon {
+      fill: #28a745;
+    }
+
+    .warning-icon {
+      fill: #dc3545;
+    }
+
+    .api-indicators {
+      margin-top: 4px;
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .api-badge {
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: bold;
+      color: white;
+    }
+
+    .api-badge.sb {
+      background: #4285f4;
+    }
+
+    .url-threat-summary {
+      margin-top: 12px;
+      padding: 8px;
+      background: #f8d7da;
+      border: 1px solid #f5c6cb;
+      border-radius: 6px;
+      font-size: 12px;
+      color: #721c24;
+      text-align: center;
+      font-weight: 500;
+    }
+
+    .api-summary {
+      margin-top: 8px;
+      padding: 6px 8px;
+      background: #e7f3ff;
+      border: 1px solid #b8daff;
+      border-radius: 4px;
+      font-size: 11px;
+      color: #004085;
+      text-align: center;
+    }
+
+    .no-urls {
+      text-align: center;
+      color: #666;
+      font-style: italic;
+      padding: 16px;
+    }
+
+    .error-state {
+      text-align: center;
+      padding: 20px;
+      color: #dc3545;
+    }
+
+    .warning-state {
+      text-align: center;
+      padding: 20px;
+      color: #ff9800;
+    }
+
+    .url-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .url-list::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 3px;
+    }
+
+    .url-list::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 3px;
+    }
+
+    .url-list::-webkit-scrollbar-thumb:hover {
+      background: #a8a8a8;
+    }
+
+    .threat-toggle {
+      transition: all 0.2s ease;
+      border-radius: 4px;
+      user-select: none;
+      cursor: pointer;
+      color: #856404;
+      font-weight: bold;
+      text-align: center;
+      padding: 4px;
+      margin-top: 4px;
+    }
+
+    .threat-toggle:hover {
+      background: rgba(133, 100, 4, 0.1);
+    }
+
+    .toggle-icon {
+      display: inline-block;
+      transition: transform 0.2s ease;
+    }
+
+    .hidden-threats {
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .api-loading {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border: 2px solid #f3f3f3;
+      border-top: 2px solid #4285f4;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-left: 4px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .score-component-divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.2);
+      margin: 4px 0;
+    }
+
+    @media (max-width: 440px) {
+      body {
+        width: 380px;
+      }
+      
+      .trust-score {
+        min-width: 280px;
+      }
+      
+      .detailed-scores {
+        font-size: 11px;
+      }
+      
+      .score-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+      }
+      
+      .ml-confidence-inline, .api-status-inline {
+        font-size: 9px;
+      }
+    }
+
+    .api-result-enter {
+      animation: slideInFromRight 0.3s ease-out;
+    }
+
+    @keyframes slideInFromRight {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    [title] {
+      position: relative;
+    }
+
+    .sb-detection {
+      background: linear-gradient(45deg, #4285f4, #34a853);
+      color: white;
+      padding: 2px 4px;
+      border-radius: 3px;
+      font-size: 9px;
+      font-weight: bold;
+    }
+
+    .sb-clean {
+      background: rgba(52, 168, 83, 0.1);
+      color: #137333;
+      padding: 2px 4px;
+      border-radius: 3px;
+      font-size: 9px;
+    }
+
+    .smart-scoring-badge {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 2px 6px;
+      border-radius: 8px;
+      font-size: 8px;
+      font-weight: 500;
+    }
+    .integration-status.no-urls {
+    color: #6c757d;
+    background: rgba(108, 117, 125, 0.15);
+    border: 1px solid rgba(108, 117, 125, 0.3);
+    }
+
+    .api-summary.api-threats-found {
+    background: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+    }
+
+    .api-summary.api-all-safe {
+    background: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+    }
+
+    .api-summary.api-fallback {
+    background: #fff3cd;
+    border-color: #ffeaa7;
+    color: #856404;
+    }
+    
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="smart-scoring-badge">AI + API + Rules</div>
+      <h1>
+        <svg class="shield-icon" viewBox="0 0 24 24">
+          <path d="M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1M12,7C13.4,7 14.8,8.6 14.8,10V11.5H16.2V16H7.8V11.5H9.2V10C9.2,8.6 10.6,7 12,7M12,8.2C11.2,8.2 10.5,8.7 10.5,10V11.5H13.5V10C13.5,8.7 12.8,8.2 12,8.2Z"/>
+        </svg>
+        MailSentinel
+      </h1>
+      <div class="header-subtitle">Smart Email Security with Google Safe Browsing</div>
+    </div>
+
+    <div class="content">
+      <div id="status">
+        <span>🔍</span>
+        <span>Waiting for analysis...</span>
+      </div>
+      
+      <div id="score-container" class="trust-score-container" style="display: none;">
+        <div id="score" class="trust-score"></div>
+      </div>
+
+      <div id="urls-section" class="url-section" style="display: none;">
+        <div class="url-header">
+          <svg class="link-icon" viewBox="0 0 24 24">
+            <path d="M3.9,12C3.9,10.29 5.29,8.9 7,8.9H11V7H7A5,5 0 0,0 2,12A5,5 0 0,0 7,17H11V15.1H7C5.29,15.1 3.9,13.71 3.9,12M8,13H16V11H8V13M17,7H13V8.9H17C18.71,8.9 20.1,10.29 20.1,12C20.1,13.71 18.71,15.1 17,15.1H13V17H17A5,5 0 0,0 22,12A5,5 0 0,0 17,7Z"/>
+          </svg>
+          <span id="url-header-text">URL Analysis</span>
+        </div>
+        <div id="urls" class="url-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
