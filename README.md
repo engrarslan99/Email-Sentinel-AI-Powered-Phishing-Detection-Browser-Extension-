@@ -188,7 +188,7 @@ Key datasets and APIs used in this project:
 - [SpamAssassin Public Corpus](https://spamassassin.apache.org/old/publiccorpus/)
 - [CEAS 2008 Spam Dataset](http://www.ceas.cc/2008/)
 - [Google Safe Browsing API](https://developers.google.com/safe-browsing/)
-- Verizon 2023 Data Breach Investigations Report
+- Verizon 2023 Data Breach Investigations Report.
 
 ---
 
