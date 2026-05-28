@@ -65,7 +65,7 @@ Final Score    = 100 − Combined Risk
 ## 🧠 Detection Layers
 
 ### 1. NLP Classifier (50%)
-- Trained on **45,000+ labeled emails** (SpamAssassin + CEAS_08 datasets)
+- Trained on **42,000+ labeled emails** (SpamAssassin + CEAS_08 datasets)
 - TF-IDF vectorization + supervised classifier
 - Outputs a spam probability converted to a 0–100 risk score
 
